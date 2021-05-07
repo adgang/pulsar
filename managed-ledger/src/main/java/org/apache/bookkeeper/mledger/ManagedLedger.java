@@ -19,6 +19,8 @@
 package org.apache.bookkeeper.mledger;
 
 import io.netty.buffer.ByteBuf;
+
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import org.apache.bookkeeper.common.annotation.InterfaceAudience;
@@ -600,4 +602,11 @@ public interface ManagedLedger {
      * will got null if corresponding ledger not exists.
      */
     CompletableFuture<LedgerInfo> getLedgerInfo(long ledgerId);
+
+    /**
+     * Split and insert data into ledger
+     */
+    List<ManagedLedger> splitSert(byte[][] dataEntries, Position position) throws ManagedLedgerException;
+    List<ManagedLedger> splitSert(byte[][] dataEntries, long entryId) throws ManagedLedgerException;
+
 }

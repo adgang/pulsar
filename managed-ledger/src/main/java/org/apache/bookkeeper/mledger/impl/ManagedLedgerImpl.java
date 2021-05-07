@@ -37,19 +37,7 @@ import io.netty.util.Recycler;
 import io.netty.util.Recycler.Handle;
 import io.netty.util.ReferenceCountUtil;
 import java.time.Clock;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -133,6 +121,7 @@ import org.apache.pulsar.common.util.collections.ConcurrentLongHashMap;
 import org.apache.pulsar.metadata.api.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+//import org.apache.bookkeeper.mledger.impl.ManagedLedgerTest;
 
 public class ManagedLedgerImpl implements ManagedLedger, CreateCallback {
     private final static long MegaByte = 1024 * 1024;
@@ -1709,6 +1698,27 @@ public class ManagedLedgerImpl implements ManagedLedger, CreateCallback {
         result.complete(ledgerInfo);
         return result;
     }
+
+    @Override
+    public List<ManagedLedger> splitSert(byte[][] dataEntries, Position position) throws ManagedLedgerException {
+        log.info("Splitserting ledger {} at {} with {} entries", position.getLedgerId(),
+                position.getEntryId(), dataEntries.length);
+        if (this.state != State.Closed && this.state != State.ClosedLedger) {
+            log.info("Ledger has to be closed for splitsert to succeed");
+            throw new ManagedLedgerException("Ledger has to be closed for splitsert to work");
+        }
+        // If split boundary is at the end of ledger, simply add one more ledger with data entries in it
+        if (position.getEntryId() == this.getLastPosition().getEntryId()) {
+
+        }
+        return null;
+    }
+
+    @Override
+    public List<ManagedLedger> splitSert(byte[][] dataEntries, long entryId) throws ManagedLedgerException {
+        return splitSert(dataEntries, new PositionImpl(this.getFirstPosition().getLedgerId(), entryId));
+    }
+
 
     CompletableFuture<ReadHandle> getLedgerHandle(long ledgerId) {
         CompletableFuture<ReadHandle> ledgerHandle = ledgerCache.get(ledgerId);
