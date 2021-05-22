@@ -267,6 +267,7 @@ public class ManagedLedgerImpl implements ManagedLedger, CreateCallback {
             final String name) {
         this(factory, bookKeeper, store, config, scheduledExecutor, orderedExecutor, name, null);
     }
+
     public ManagedLedgerImpl(ManagedLedgerFactoryImpl factory, BookKeeper bookKeeper, MetaStore store,
             ManagedLedgerConfig config, OrderedScheduler scheduledExecutor, OrderedExecutor orderedExecutor,
             final String name, final Supplier<Boolean> mlOwnershipChecker) {
@@ -298,6 +299,10 @@ public class ManagedLedgerImpl implements ManagedLedger, CreateCallback {
         if (config.getManagedLedgerInterceptor() != null) {
             this.managedLedgerInterceptor = config.getManagedLedgerInterceptor();
         }
+    }
+
+    public ManagedLedgerImpl clone() {
+        return new ManagedLedgerImpl(factory, bookKeeper, store, config, scheduledExecutor, executor, name, mlOwnershipChecker);
     }
 
     synchronized void initialize(final ManagedLedgerInitializeLedgerCallback callback, final Object ctx) {
@@ -1709,7 +1714,8 @@ public class ManagedLedgerImpl implements ManagedLedger, CreateCallback {
         }
         // If split boundary is at the end of ledger, simply add one more ledger with data entries in it
         if (position.getEntryId() == this.getLastPosition().getEntryId()) {
-
+            ManagedLedger newLedger = this.clone();
+            newLedger =
         }
         return null;
     }

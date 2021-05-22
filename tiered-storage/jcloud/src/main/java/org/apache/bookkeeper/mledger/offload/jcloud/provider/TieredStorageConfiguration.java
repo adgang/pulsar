@@ -79,6 +79,7 @@ public class TieredStorageConfiguration {
     public static final String S3_ROLE_SESSION_NAME_FIELD = "s3ManagedLedgerOffloadRoleSessionName";
 
     public static TieredStorageConfiguration create(Properties props) throws IOException {
+        log.info("Created from properties: {}", props);
         Map<String, String> map = new HashMap<String, String>();
         map.putAll(props.entrySet()
                 .stream()
@@ -89,6 +90,7 @@ public class TieredStorageConfiguration {
     }
 
     public static TieredStorageConfiguration create(Map<String, String> props) {
+        log.info("Created from map: {}", props);
         return new TieredStorageConfiguration(props);
     }
 
@@ -99,6 +101,8 @@ public class TieredStorageConfiguration {
     private JCloudBlobStoreProvider provider;
 
     public TieredStorageConfiguration(Map<String, String> configProperties) {
+        log.info("props: {}", configProperties);
+        log.error("fake error to see stack: ", new Exception("blah"));
         if (configProperties != null) {
             this.configProperties = configProperties;
         } else {
@@ -239,6 +243,8 @@ public class TieredStorageConfiguration {
     public Integer getMaxBlockSizeInBytes() {
         for (String key : getKeys(METADATA_FIELD_MAX_BLOCK_SIZE)) {
             if (configProperties.containsKey(key)) {
+                log.info("config picked from key:" + key);
+                log.info("config picked from key:" + configProperties.get(key));
                 return Integer.valueOf(configProperties.get(key));
             }
         }

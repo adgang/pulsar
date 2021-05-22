@@ -166,6 +166,23 @@ public enum JCloudBlobStoreProvider implements Serializable, ConfigValidation, B
         }
     },
 
+    S3("s3", new AnonymousProviderMetadata(new S3ApiMetadata(), "")) {
+      @Override
+        public void validate(TieredStorageConfiguration config) throws IllegalArgumentException {
+            VALIDATION.validate(config);
+        }
+
+        @Override
+        public BlobStore getBlobStore(TieredStorageConfiguration config) {
+            return BLOB_STORE_BUILDER.getBlobStore(config);
+        }
+
+        @Override
+        public void buildCredentials(TieredStorageConfiguration config) {
+            AWS_CREDENTIAL_BUILDER.buildCredentials(config);
+        }
+    },
+
 
     /**
      * Aliyun OSS is compatible with the S3 API

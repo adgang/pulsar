@@ -211,6 +211,10 @@ public class BlockAwareSegmentInputStreamImpl extends BlockAwareSegmentInputStre
     // Calculate the block size after uploaded `entryBytesAlreadyWritten` bytes
     public static int calculateBlockSize(int maxBlockSize, ReadHandle readHandle,
                                          long firstEntryToWrite, long entryBytesAlreadyWritten) {
+        long rest = (readHandle.getLastAddConfirmed() - firstEntryToWrite + 1) * ENTRY_HEADER_SIZE
+                + (readHandle.getLength() - entryBytesAlreadyWritten)
+                + DataBlockHeaderImpl.getDataStartOffset();
+        log.info("Block size:" + maxBlockSize + " restsize:" + rest);
         return (int) Math.min(
             maxBlockSize,
             (readHandle.getLastAddConfirmed() - firstEntryToWrite + 1) * ENTRY_HEADER_SIZE

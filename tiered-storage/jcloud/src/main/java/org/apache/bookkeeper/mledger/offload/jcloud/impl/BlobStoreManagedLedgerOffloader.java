@@ -204,9 +204,10 @@ public class BlobStoreManagedLedgerOffloader implements LedgerOffloader {
                         Payload partPayload = Payloads.newInputStreamPayload(blockStream);
                         partPayload.getContentMetadata().setContentLength((long) blockSize);
                         partPayload.getContentMetadata().setContentType("application/octet-stream");
+                        log.info("UploadMultipartPart. container: {}, blobName: {}, partId: {}, mpu: {} {}",
+                                config.getBucket(), dataBlockKey, partId, mpu.id(), partPayload.getRawContent());
+
                         parts.add(writeBlobStore.uploadMultipartPart(mpu, partId, partPayload));
-                        log.debug("UploadMultipartPart. container: {}, blobName: {}, partId: {}, mpu: {}",
-                                config.getBucket(), dataBlockKey, partId, mpu.id());
 
                         indexBuilder.addBlock(startEntry, partId, blockSize);
 
